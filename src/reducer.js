@@ -1,7 +1,7 @@
 import { simulateDay } from "./economy.js";
+import { randomEvent } from "./events.js";
 
 export function update(state, action) {
-  // Make a copy so we don’t change the original
   const newState = structuredClone(state);
 
   if (action.type === "NEXT_DAY") {
@@ -10,22 +10,36 @@ export function update(state, action) {
   }
 
   if (action.type === "CLEAN") {
-    newState.cleanliness += 10;
-    if (newState.cleanliness > 100) {
-      newState.cleanliness = 100;
-    }
-    newState.log.push("You cleaned the shop.");
+    newState.cleanliness = Math.min(100, newState.cleanliness + 10);
+    newState.log.push(
+      `You cleaned the shop. Cleanliness is now ${newState.cleanliness}.`
+    );
   }
 
   if (action.type === "SET_PRICE") {
-  const { item, price } = action;
-  newState.prices[item] = price;
+    newState.prices[action.item] = action.price;
   }
-  
+
+  if (action.type === "PROMO") {
+    if (newState.cashCents >= 300) {
+      newState.cashCents -= 300;
+      newState.promoDaysLeft = 2;
+      newState.log.push("You ran a promotion.");
+    } else {
+      newState.log.push("Not enough cash to run a promotion.");
+    }
+  }
+
   if (action.type === "OPEN_SHOP") {
-  simulateDay(newState);
-  newState.day += 1;
-  newState.log.push("You opened the shop.");
+    const event = randomEvent(newState);
+    simulateDay(newState, event);
+
+    if (newState.promoDaysLeft > 0) {
+      newState.promoDaysLeft -= 1;
+    }
+
+    newState.day += 1;
+    newState.log.push("You opened the shop.");
   }
 
   return newState;
