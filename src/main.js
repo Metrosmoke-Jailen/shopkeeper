@@ -22,6 +22,10 @@ document.getElementById("open-shop").addEventListener("click", () => {
   dispatch({ type: "OPEN_SHOP" });
 });
 
+document.getElementById("promo").addEventListener("click", () => {
+  dispatch({ type: "PROMO" });
+});
+
 const inventoryEl = document.getElementById("inventory");
 
 inventoryEl.addEventListener("change", (e) => {
