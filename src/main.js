@@ -22,18 +22,22 @@ document.getElementById("open-shop").addEventListener("click", () => {
   dispatch({ type: "OPEN_SHOP" });
 });
 
-document.getElementById("price-coffee").addEventListener("change", e => {
-  dispatch({
-    type: "SET_PRICE",
-    item: "coffee",
-    price: Number(e.target.value)
-  });
-});
+const inventoryEl = document.getElementById("inventory");
 
-document.getElementById("price-bagel").addEventListener("change", e => {
-  dispatch({
-    type: "SET_PRICE",
-    item: "bagel",
-    price: Number(e.target.value)
-  });
+inventoryEl.addEventListener("change", (e) => {
+  if (e.target.id === "price-coffee") {
+    dispatch({
+      type: "SET_PRICE",
+      item: "coffee",
+      price: Number(e.target.value)
+    });
+  }
+
+  if (e.target.id === "price-bagel") {
+    dispatch({
+      type: "SET_PRICE",
+      item: "bagel",
+      price: Number(e.target.value)
+    });
+  }
 });
