@@ -10,6 +10,7 @@ function renderStatus(state) {
     <h2>Status</h2>
     <p><strong>Day:</strong> ${state.day}</p>
     <p><strong>Cash:</strong> $${(state.cashCents / 100).toFixed(2)}</p>
+    <p><strong>Cleanliness:</strong> ${state.cleanliness}</p>
   `;
 }
 
