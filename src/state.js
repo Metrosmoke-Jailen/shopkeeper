@@ -17,6 +17,7 @@ export function makeInitialState() {
       bagel: 250
     },
 
+    promoDaysLeft: 0, // NEW
     lastReport: null,
     log: ["Welcome to your new shop!"]
   };
