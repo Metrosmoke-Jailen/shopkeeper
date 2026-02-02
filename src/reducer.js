@@ -1,5 +1,6 @@
 import { simulateDay } from "./economy.js";
 import { randomEvent } from "./events.js";
+import { clampNumber } from "./utils.js";
 
 export function update(state, action) {
   const newState = structuredClone(state);
@@ -30,6 +31,41 @@ export function update(state, action) {
     }
   }
 
+  if (action.type === "ORDER_STOCK") {
+    const item = action.item;
+    const qty = clampNumber(action.qty, 1, 20);
+
+    if (newState.orderedToday) {
+      newState.log.push("You already placed an order today.");
+      return newState;
+    }
+
+    const costPerItem =
+      item === "coffee" ? 150 :
+      item === "bagel" ? 100 :
+      null;
+
+    if (costPerItem === null) {
+      newState.log.push("Invalid item.");
+      return newState;
+    }
+
+    const totalCost = costPerItem * qty;
+
+    if (newState.cashCents < totalCost) {
+      newState.log.push("Not enough cash to place that order.");
+      return newState;
+    }
+
+    newState.cashCents -= totalCost;
+    newState.inventory[item] += qty;
+    newState.orderedToday = true;
+
+    newState.log.push(
+      `Ordered ${qty} ${item}(s) for $${(totalCost / 100).toFixed(2)}.`
+    );
+  }
+
   if (action.type === "OPEN_SHOP") {
     const event = randomEvent(newState);
     simulateDay(newState, event);
@@ -39,7 +75,18 @@ export function update(state, action) {
     }
 
     newState.day += 1;
+    newState.orderedToday = false;
     newState.log.push("You opened the shop.");
+  }
+
+  if (newState.cashCents < 0) {
+    newState.gameOver = true;
+    newState.log.push("You went bankrupt. Game over.");
+  }
+
+  if (newState.day > 10 && newState.cashCents >= 6000) {
+    newState.gameOver = true;
+    newState.log.push("You ran a successful shop! You win!");
   }
 
   return newState;

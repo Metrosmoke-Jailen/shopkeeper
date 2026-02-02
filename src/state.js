@@ -18,6 +18,9 @@ export function makeInitialState() {
     },
 
     promoDaysLeft: 0, // NEW
+    orderedToday: false,   // NEW
+    gameOver: false,       // NEW
+    
     lastReport: null,
     log: ["Welcome to your new shop!"]
   };
