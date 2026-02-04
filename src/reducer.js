@@ -1,9 +1,6 @@
 import { clampNumber } from "./utils.js";
 import { PRODUCTS } from "./products.js";
-<<<<<<< HEAD
-=======
 import { simulateDay } from "./simulateDay.js";
->>>>>>> refs/remotes/shopkeeper/main
 
 export function update(state, action) {
   const newState = structuredClone(state);
@@ -24,7 +21,6 @@ export function update(state, action) {
     }
 
     const product = PRODUCTS.find(p => p.id === item);
-<<<<<<< HEAD
 
 if (!product) {
   newState.log.push("Invalid item.");
@@ -33,14 +29,6 @@ if (!product) {
 
 const costPerItem = product.wholesaleCents;
 const totalCost = costPerItem * qty;
-=======
-    if (!product) {
-      newState.log.push("Invalid item.");
-      return newState;
-    }
-
-    const totalCost = product.wholesaleCents * qty;
->>>>>>> refs/remotes/shopkeeper/main
 
     if (newState.cashCents < totalCost) {
       newState.log.push("Not enough cash to place that order.");
