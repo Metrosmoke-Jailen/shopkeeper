@@ -5,26 +5,6 @@ export function render(state) {
     renderInventory(state);
     renderReport(state);
     renderLog(state);
-    renderOrderPanel(state);
-}
-
-function renderOrderPanel(state) {
-  const select = document.getElementById("order-item");
-  if (!select) return;
-
-  // Preserve selection between renders
-  const previous = select.value;
-
-  select.innerHTML = PRODUCTS.map(p =>
-    `<option value="${p.id}">${p.name}</option>`
-  ).join("");
-
-  if (previous) select.value = previous;
-
-  const orderBtn = document.getElementById("order-button");
-  if (orderBtn) {
-    orderBtn.disabled = !!state.orderedToday || !!state.gameOver;
-  }
 }
 
 function renderStatus(state) {
@@ -82,13 +62,28 @@ function renderReport(state) {
   `;
 }
 
+function renderOrderPanel(state) {
+  const select = document.getElementById("order-item");
+  if (!select) return;
+
+  const previous = select.value;
+
+  select.innerHTML = PRODUCTS.map(p =>
+    `<option value="${p.id}">${p.name}</option>`
+  ).join("");
+
+  if (previous) select.value = previous;
+
+  const orderBtn = document.getElementById("order-button");
+  if (orderBtn) {
+    orderBtn.disabled = !!state.orderedToday || !!state.gameOver;
+  }
+}
+
 function renderLog(state) {
   const log = document.getElementById("log");
   log.innerHTML = `
     <h2>Log</h2>
-    <ul>
-      ${state.log.map(msg => `<li>${msg}</li>`).join("")}
-    </ul>
+    <ul>${state.log.map(l => `<li>${l}</li>`).join("")}</ul>
   `;
 }
-

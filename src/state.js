@@ -4,17 +4,35 @@
 export function makeInitialState() {
   return {
     day: 1,
+<<<<<<< HEAD
     cashCents: 3000, // $30.00
     cleanliness: 60,
 
     inventory: { coffee: 5, bagel: 5, tea: 5 },
     prices:    { coffee: 300, bagel: 250, tea: 275 },
+=======
+    cashCents: 2000,
 
-    promoDaysLeft: 0, // NEW
-    orderedToday: false,   // NEW
-    gameOver: false,       // NEW
-    
+    inventory: {
+      coffee: 5,
+      bagel: 5,
+      tea: 5,
+    },
+
+    prices: {
+      coffee: 300,
+      bagel: 250,
+      tea: 275,
+    },
+>>>>>>> refs/remotes/shopkeeper/main
+
+    cleanliness: 3,
+    promoActive: false,
+
+    orderedToday: false,
     lastReport: null,
-    log: ["Welcome to your new shop!"]
+
+    log: [],
+    gameOver: false,
   };
 }
