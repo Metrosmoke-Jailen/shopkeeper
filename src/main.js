@@ -43,13 +43,15 @@ document.getElementById("order-button").addEventListener("click", () => {
   });
 });
 
-document.getElementById("inventory").addEventListener("change", e => {
-  if (e.target.id === "price-coffee") {
-    dispatch({ type: "SET_PRICE", item: "coffee", price: Number(e.target.value) });
-  }
-  if (e.target.id === "price-bagel") {
-    dispatch({ type: "SET_PRICE", item: "bagel", price: Number(e.target.value) });
-  }
+const inventoryEl = document.getElementById("inventory");
+
+inventoryEl.addEventListener("change", (e) => {
+  if (!e.target.classList.contains("price-input")) return;
+
+  const item = e.target.dataset.item;
+  const price = Number(e.target.value);
+
+  dispatch({ type: "SET_PRICE", item, price });
 });
 
 document.getElementById("save").addEventListener("click", () => {

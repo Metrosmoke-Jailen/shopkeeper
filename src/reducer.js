@@ -1,6 +1,7 @@
 import { simulateDay } from "./economy.js";
 import { randomEvent } from "./events.js";
 import { clampNumber } from "./utils.js";
+import { PRODUCTS } from "./products.js";
 
 export function update(state, action) {
   const newState = structuredClone(state);
@@ -40,17 +41,15 @@ export function update(state, action) {
       return newState;
     }
 
-    const costPerItem =
-      item === "coffee" ? 150 :
-      item === "bagel" ? 100 :
-      null;
+    const product = PRODUCTS.find(p => p.id === item);
 
-    if (costPerItem === null) {
-      newState.log.push("Invalid item.");
-      return newState;
-    }
+if (!product) {
+  newState.log.push("Invalid item.");
+  return newState;
+}
 
-    const totalCost = costPerItem * qty;
+const costPerItem = product.wholesaleCents;
+const totalCost = costPerItem * qty;
 
     if (newState.cashCents < totalCost) {
       newState.log.push("Not enough cash to place that order.");
