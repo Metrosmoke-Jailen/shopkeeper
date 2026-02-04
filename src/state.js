@@ -4,24 +4,27 @@
 export function makeInitialState() {
   return {
     day: 1,
-    cashCents: 2500, // $25.00
-    cleanliness: 60,
+    cashCents: 2000,
 
     inventory: {
       coffee: 5,
-      bagel: 5
+      bagel: 5,
+      tea: 5,
     },
 
     prices: {
-      coffee: 300, // cents
-      bagel: 250
+      coffee: 300,
+      bagel: 250,
+      tea: 275,
     },
 
-    promoDaysLeft: 0, // NEW
-    orderedToday: false,   // NEW
-    gameOver: false,       // NEW
-    
+    cleanliness: 3,
+    promoActive: false,
+
+    orderedToday: false,
     lastReport: null,
-    log: ["Welcome to your new shop!"]
+
+    log: [],
+    gameOver: false,
   };
 }

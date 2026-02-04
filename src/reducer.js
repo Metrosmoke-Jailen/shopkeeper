@@ -1,34 +1,14 @@
-import { simulateDay } from "./economy.js";
-import { randomEvent } from "./events.js";
 import { clampNumber } from "./utils.js";
+import { PRODUCTS } from "./products.js";
+import { simulateDay } from "./simulateDay.js";
 
 export function update(state, action) {
   const newState = structuredClone(state);
 
-  if (action.type === "NEXT_DAY") {
-    newState.day += 1;
-    newState.log.push("A new day begins.");
-  }
-
-  if (action.type === "CLEAN") {
-    newState.cleanliness = Math.min(100, newState.cleanliness + 10);
-    newState.log.push(
-      `You cleaned the shop. Cleanliness is now ${newState.cleanliness}.`
-    );
-  }
+  if (newState.gameOver) return newState;
 
   if (action.type === "SET_PRICE") {
-    newState.prices[action.item] = action.price;
-  }
-
-  if (action.type === "PROMO") {
-    if (newState.cashCents >= 300) {
-      newState.cashCents -= 300;
-      newState.promoDaysLeft = 2;
-      newState.log.push("You ran a promotion.");
-    } else {
-      newState.log.push("Not enough cash to run a promotion.");
-    }
+    newState.prices[action.item] = clampNumber(action.price, 50, 1000);
   }
 
   if (action.type === "ORDER_STOCK") {
@@ -40,17 +20,13 @@ export function update(state, action) {
       return newState;
     }
 
-    const costPerItem =
-      item === "coffee" ? 150 :
-      item === "bagel" ? 100 :
-      null;
-
-    if (costPerItem === null) {
+    const product = PRODUCTS.find(p => p.id === item);
+    if (!product) {
       newState.log.push("Invalid item.");
       return newState;
     }
 
-    const totalCost = costPerItem * qty;
+    const totalCost = product.wholesaleCents * qty;
 
     if (newState.cashCents < totalCost) {
       newState.log.push("Not enough cash to place that order.");
@@ -62,21 +38,19 @@ export function update(state, action) {
     newState.orderedToday = true;
 
     newState.log.push(
-      `Ordered ${qty} ${item}(s) for $${(totalCost / 100).toFixed(2)}.`
+      `Ordered ${qty} ${product.name}(s) for $${(totalCost / 100).toFixed(2)}.`
     );
   }
 
   if (action.type === "OPEN_SHOP") {
-    const event = randomEvent(newState);
-    simulateDay(newState, event);
+    simulateDay(newState);
 
-    if (newState.promoDaysLeft > 0) {
-      newState.promoDaysLeft -= 1;
-    }
+    const rentCents = 200;
+    newState.cashCents -= rentCents;
+    newState.log.push(`Paid rent: $${(rentCents / 100).toFixed(2)}.`);
 
     newState.day += 1;
     newState.orderedToday = false;
-    newState.log.push("You opened the shop.");
   }
 
   if (newState.cashCents < 0) {
