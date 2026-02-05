@@ -1,10 +1,12 @@
+// This file updates the page using the state object.
 import { PRODUCTS } from "./products.js";
 
 export function render(state) {
-    renderStatus(state);
-    renderInventory(state);
-    renderReport(state);
-    renderLog(state);
+  renderStatus(state); // add this line
+  renderInventory(state);
+  renderOrderPanel(state);
+  renderLog(state);
+  renderReport(state);
 }
 
 function renderStatus(state) {
@@ -13,7 +15,7 @@ function renderStatus(state) {
     <h2>Status</h2>
     <p><strong>Day:</strong> ${state.day}</p>
     <p><strong>Cash:</strong> $${(state.cashCents / 100).toFixed(2)}</p>
-    <p><strong>Cleanliness:</strong> ${state.cleanliness}</p>
+    <p><strong>Cleanliness:</strong> ${state.cleanliness}%</p>
   `;
 }
 
@@ -42,30 +44,11 @@ function renderInventory(state) {
   `;
 }
 
-function renderReport(state) {
-  const report = document.getElementById("report");
-
-  if (!state.lastReport) {
-    report.innerHTML = `<h2>Report</h2><p>No report yet.</p>`;
-    return;
-  }
-
-  const lines = PRODUCTS.map(p => {
-    const sold = state.lastReport.soldByItem[p.id] ?? 0;
-    return `<p>${p.name} sold: ${sold}</p>`;
-  }).join("");
-
-  report.innerHTML = `
-    <h2>Report Day ${state.day}</h2>
-    ${lines}
-    <p>Revenue: $${(state.lastReport.revenue / 100).toFixed(2)}</p>
-  `;
-}
-
 function renderOrderPanel(state) {
   const select = document.getElementById("order-item");
   if (!select) return;
 
+  // Preserve selection between renders
   const previous = select.value;
 
   select.innerHTML = PRODUCTS.map(p =>
@@ -84,6 +67,28 @@ function renderLog(state) {
   const log = document.getElementById("log");
   log.innerHTML = `
     <h2>Log</h2>
-    <ul>${state.log.map(l => `<li>${l}</li>`).join("")}</ul>
+    <ul>
+      ${state.log.map(msg => `<li>${msg}</li>`).join("")}
+    </ul>
+  `;
+}
+
+function renderReport(state) {
+  const report = document.getElementById("report");
+
+  if (!state.lastReport) {
+    report.innerHTML = `<h2>Report</h2><p>No report yet.</p>`;
+    return;
+  }
+
+  const lines = PRODUCTS.map(p => {
+    const sold = state.lastReport.soldByItem[p.id] ?? 0;
+    return `<p>${p.name} sold: ${sold}</p>`;
+  }).join("");
+
+  report.innerHTML = `
+    <h2>Report Day ${state.day}</h2>
+    ${lines}
+    <p>Revenue: $${(state.lastReport.revenue / 100).toFixed(2)}</p>
   `;
 }

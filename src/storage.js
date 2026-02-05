@@ -7,4 +7,3 @@ export function loadState() {
   if (!data) return null;
   return JSON.parse(data);
 }
-  
