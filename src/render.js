@@ -2,7 +2,7 @@
 import { PRODUCTS } from "./products.js";
 
 export function render(state) {
-  renderStatus(state); // add this line
+  renderStatus(state);
   renderInventory(state);
   renderOrderPanel(state);
   renderLog(state);
