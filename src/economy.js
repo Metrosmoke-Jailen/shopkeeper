@@ -1,55 +1,63 @@
+import { PRODUCTS } from "./products.js";
+
 export function simulateDay(state, event) {
   let revenue = 0;
+  const soldByItem = {};
 
-  let cleanlinessModifier = 0;
+  let cleanlinessMultiplier = 1;
 
   if (state.cleanliness < 40) {
-  cleanlinessModifier = -1;
+    cleanlinessMultiplier = 0.85; // −15% demand
+  } else if (state.cleanliness > 70) {
+    cleanlinessMultiplier = 1.15; // +15% demand
   }
 
-  if (state.cleanliness > 70) {
-  cleanlinessModifier = 1;
-  }
-
-  // Coffee sales
-  let coffeeSold = 0;
-  if (state.prices.coffee <= 350) {
-    coffeeSold = Math.min(3, state.inventory.coffee);
-  } else {
-    coffeeSold = Math.min(1, state.inventory.coffee);
-  }
-  // Apply cleanliness, then clamp to [0, inventory]
-coffeeSold = Math.max(0, coffeeSold + cleanlinessModifier);
-coffeeSold = Math.min(coffeeSold, state.inventory.coffee);
-
-  state.inventory.coffee -= coffeeSold;
-  revenue += coffeeSold * state.prices.coffee;
-
-  // Bagel sales
-  let bagelSold = 0;
-  if (state.prices.bagel <= 300) {
-    bagelSold = Math.min(2, state.inventory.bagel);
-  } else {
-    bagelSold = Math.min(1, state.inventory.bagel);
-  }
-  // Apply cleanliness, then clamp to [0, inventory]
-bagelSold = Math.max(0, bagelSold + cleanlinessModifier);
-bagelSold = Math.min(bagelSold, state.inventory.bagel);
-
-  state.inventory.bagel -= bagelSold;
-  revenue += bagelSold * state.prices.bagel;
-
-  if (state.promoDaysLeft > 0) {
-  coffeeSold += 1;
-  bagelSold += 1;
-  }
+  const promoMultiplier =
+    state.promoDaysLeft > 0 ? 1.25 : 1; // +25% demand
   
+  const demandBoost = event?.demandBoost ?? 1;
+  const noBagels = event?.noBagels ?? false;
+  const raccoonSteal = event?.steal ?? false;
+  
+  for(const p of PRODUCTS) {
+    const {id, wholesaleCents, baseDemand} = p
+      // Start from base demand
+    let dailySales = baseDemand;
+
+    // --- Daily randomness (±20%) ---
+    const randomFactor = 0.8 + Math.random() * 0.4;
+    dailySales *= randomFactor;
+
+    // --- Apply modifiers ---
+    dailySales *= cleanlinessMultiplier;
+    dailySales *= promoMultiplier;
+
+    // --- Round to whole units ---
+    dailySales = Math.floor(dailySales);
+
+    // --- Clamp by available inventory ---
+    dailySales = Math.min(dailySales, state.inventory[id]);
+    dailySales = Math.max(0, dailySales);
+
+    // --- Apply results ---
+    state.inventory[id] -= dailySales;
+    const itemRevenue = dailySales * state.prices[id];
+    revenue += itemRevenue;
+
+    soldByItem[id] = dailySales;
+  }
+
+  if (raccoonSteal) {
+    for (const p of PRODUCTS) {
+      const stolen = Math.min(2, state.inventory[p.id]);
+      state.inventory[p.id] -= stolen;
+    }
+  }
+
   state.cashCents += revenue;
+  
   state.lastReport = {
-  soldByItem: {
-    coffee: coffeeSold,
-    bagel: bagelSold
-  },
+  soldByItem,
   revenue
 };
 }

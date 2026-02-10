@@ -18,6 +18,7 @@ export function update(state, action) {
     newState.log.push("A new day begins.");
   }
 
+
   if (action.type === "CLEAN") {
     newState.cleanliness += 10;
     if (newState.cleanliness > 100) {
@@ -26,10 +27,12 @@ export function update(state, action) {
     newState.log.push("You cleaned the shop.");
   }
 
+
   if (action.type === "SET_PRICE") {
   const { item, price } = action;
   newState.prices[item] = price;
   }
+
 
   if (action.type === "OPEN_SHOP") {
   const event = randomEvent(newState);
@@ -45,6 +48,7 @@ export function update(state, action) {
   newState.log.push("You opened the shop.");
   }
 
+
   if (action.type === "PROMO") {
   if (newState.cashCents >= 300) {
     newState.cashCents -= 300;
@@ -53,6 +57,7 @@ export function update(state, action) {
   } else {
     newState.log.push("Not enough cash to run a promotion.");
   }
+}
 
   if (action.type === "ORDER_STOCK") {
   const item = action.item;
@@ -85,7 +90,7 @@ const totalCost = costPerItem * qty;
   newState.log.push(`Ordered ${qty} ${item}(s) for $${(totalCost / 100).toFixed(2)}.`);
   return newState;
   }
-  }
+  
   if (newState.cashCents < 0) {
   newState.gameOver = true;
   newState.log.push("You went bankrupt. Game over.");
