@@ -65,6 +65,7 @@ function renderOrderPanel(state) {
 
 function renderLog(state) {
   const log = document.getElementById("log");
+  log.scrollTop = log.scrollHeight;
   log.innerHTML = `
     <h2>Log</h2>
     <ul>
