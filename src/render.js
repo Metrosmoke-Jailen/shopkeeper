@@ -87,8 +87,10 @@ function renderReport(state) {
   }).join("");
 
   report.innerHTML = `
-    <h2>Report Day ${state.day}</h2>
-    ${lines}
-    <p>Revenue: $${(state.lastReport.revenue / 100).toFixed(2)}</p>
-  `;
+  <h2>Report Day ${state.day}</h2>
+  <p><em>${state.lastReport.dayMessage ?? ""}</em></p>
+  <p><strong>${state.lastReport.eventMessage ?? ""}</strong></p>
+  ${lines}
+  <p><strong>Revenue:</strong> $${(state.lastReport.revenue / 100).toFixed(2)}</p>
+`;
 }

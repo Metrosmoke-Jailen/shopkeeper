@@ -2,6 +2,7 @@ import { makeInitialState } from "./state.js";
 import { render } from "./render.js";
 import { update } from "./reducer.js";
 import { saveState, loadState } from "./storage.js";
+import { randomEvent } from "./events.js";
 
 let state = makeInitialState();
 render(state);
@@ -23,6 +24,8 @@ function disableControls() {
 
 document.getElementById("next-day").addEventListener("click", () => {
   dispatch({ type: "NEXT_DAY" });
+  const event = randomEvent();
+  simulateDay(state, event);
 });
 
 document.getElementById("clean").addEventListener("click", () => {
